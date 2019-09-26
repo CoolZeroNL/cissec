@@ -19,7 +19,7 @@ Simply add the addition content, substituting the IP address for that of the web
   <img width="75%" src="./readme.images/bootmenu.png">
 </p>
 
-   ` vmlinuz initrd=initrd.img ks=http://192.168.200.131/ks.cfg`
+   ` vmlinuz initrd=initrd.img ks=https://raw.githubusercontent.com/CoolZeroNL/cissec/master/centos8-cis.ks`
 
 
 

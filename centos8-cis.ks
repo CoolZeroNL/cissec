@@ -11,8 +11,8 @@ auth --useshadow --passalgo=sha512 			# CIS 6.3.1
 firewall --enabled
 services --enabled=NetworkManager,sshd
 eula --agreed
-# ignoredisk --only-use=vda     ## vmware...
-ignoredisk --drives=hd*|vda
+# ignoredisk --only-use=vda     ## vmware has hdd as: sda
+ignoredisk --only-use=sda
 reboot
 	 
 bootloader --location=mbr --append=" crashkernel=auto"
