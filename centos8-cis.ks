@@ -5,7 +5,7 @@
 
 install
 lang en_GB.UTF-8
-keyboard --vckeymap=gb --xlayouts='gb'
+keyboard --vckeymap=us --xlayouts='us'
 timezone Europe/Amsterdam --isUtc
 auth --useshadow --passalgo=sha512 			# CIS 6.3.1
 firewall --enabled
@@ -22,7 +22,7 @@ part swap --asprimary --fstype="swap" --size=1024
 part /boot --fstype xfs --size=200
 part pv.01 --size=1 --grow
 volgroup vg_root pv.01
-logvol / --fstype xfs --name=root --vgname=vg_root --size=5120
+logvol / --fstype xfs --name=root --vgname=vg_root --size=10240
 # CIS 1.1.1-1.1.4
 logvol /tmp --vgname vg_root --name tmp --size=500 --fsoptions="nodev,nosuid,noexec"
 # CIS 1.1.5
@@ -36,34 +36,38 @@ logvol /home --vgname vg_root --name home --size=1024 --grow --fsoptions="nodev"
 	 
 rootpw coolzero
 
-repo --name=base --baseurl="https://mirrors.edge.kernel.org/centos/8/AppStream/x86_64/os/"
-url --url="https://mirrors.edge.kernel.org/centos/8/AppStream/x86_64/os/"
+repo --name=base --baseurl="http://mirror.centos.org/centos-8/8.0.1905/BaseOS/x86_64/os/"
+url --url="http://mirror.centos.org/centos-8/8.0.1905/BaseOS/x86_64/os/"
 
+# // crash....
 %packages --ignoremissing
 @core
-aide 				# CIS 1.3.1
+git                         # added JHG
+nano                        # added JHG
+aide 				                # CIS 1.3.1
 setroubleshoot-server
-ntp				# CIS 3.6
-tcp_wrappers			# CIS 4.5.1
-rsyslog				# CIS 5.1.1
-cronie-anacron			# CIS 6.1.2
--setroubleshoot 		# CIS 1.4.4
--mcstrans	 		# CIS 1.4.5
--telnet 			# CIS 2.1.2
--rsh-server 			# CIS 2.1.3
--rsh				# CIS 2.1.4
--ypbind				# CIS 2.1.5
--ypserv				# CIS 2.1.6
--tftp				# CIS 2.1.7
--tftp-server			# CIS 2.1.8
--talk				# CIS 2.1.9
--talk-server			# CIS 2.1.10
--xinetd				# CIS 2.1.11
--xorg-x11-server-common		# CIS 3.2
--avahi-daemon			# CIS 3.3
--cups				# CIS 3.4
--dhcp				# CIS 3.5
--openldap			# CIS 3.7
+chrony                      # added JHG -> is replacement for NTP
+# ntp				                # CIS 3.6
+tcp_wrappers			          # CIS 4.5.1
+rsyslog				              # CIS 5.1.1
+cronie-anacron		          # CIS 6.1.2
+-setroubleshoot 	          # CIS 1.4.4
+-mcstrans	 		              # CIS 1.4.5
+-telnet 			              # CIS 2.1.2
+-rsh-server 			          # CIS 2.1.3
+-rsh				                # CIS 2.1.4
+# -ypbind				            # CIS 2.1.5
+# -ypserv				            # CIS 2.1.6
+# -tftp				              # CIS 2.1.7
+# -tftp-server			        # CIS 2.1.8
+# -talk				              # CIS 2.1.9
+# -talk-server			        # CIS 2.1.10
+# -xinetd				            # CIS 2.1.11
+# -xorg-x11-server-common		# CIS 3.2
+# -avahi-daemon			        # CIS 3.3
+# -cups				              # CIS 3.4
+# -dhcp				              # CIS 3.5
+# -openldap			            # CIS 3.7
 %end
 
 %post --log=/root/postinstall.log
@@ -149,11 +153,21 @@ cd /usr/lib/systemd/system				# CIS 3.2
 rm default.target
 ln -s multi-user.target default.target
 
-ntp_conf='/etc/ntp.conf'
-sed -i "s/^restrict default/restrict default kod/" ${ntp_conf}
-line_num="$(grep -n "^restrict default" ${ntp_conf} | cut -f1 -d:)"
-sed -i "${line_num} a restrict -6 default kod nomodify notrap nopeer noquery" ${ntp_conf}
-sed -i s/'^OPTIONS="-g"'/'OPTIONS="-g -u ntp:ntp -p \/var\/run\/ntpd.pid"'/ /etc/sysconfig/ntpd
+
+## NTP is not availible in CENTOS8
+
+# ntp_conf='/etc/ntp.conf'
+# sed -i "s/^restrict default/restrict default kod/" ${ntp_conf}                                      # no restrict default in crony
+# line_num="$(grep -n "^restrict default" ${ntp_conf} | cut -f1 -d:)"                                 # no restrict default in crony
+# sed -i "${line_num} a restrict -6 default kod nomodify notrap nopeer noquery" ${ntp_conf}           # no restrict default in crony
+# sed -i s/'^OPTIONS="-g"'/'OPTIONS="-g -u ntp:ntp -p \/var\/run\/ntpd.pid"'/ /etc/sysconfig/ntpd     # changed to chronky...
+
+# is replaced by crony
+crony_conf='/etc/chrony.conf'
+sed -i s/'^OPTIONS=""'/'OPTIONS="-u chrony:chrony"'/ /etc/sysconfig/chronyd
+
+
+
 
 echo "ALL: ALL" >> /etc/hosts.deny			# CIS 4.5.4
 chown root:root /etc/hosts.deny				# CIS 4.5.5
