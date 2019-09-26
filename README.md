@@ -7,6 +7,23 @@ minimal.ks
 cis-audit
 
 
+install notes:
+    - on bootup, 
+Booting Your Kickstart
+All the hard work is now done and all that is left to do is to boot off a minimal install CD (or any bootable install media).
+
+Run the automated install by booting from the disk media. When the guests get to the boot screen press the tab key. This allows you to change or add options to the boot configuration.
+
+Simply add the addition content, substituting the IP address for that of the web server in use and the ks.cfg file for the Kickstart file name when the test Kickstart file was created earlier.
+<p align="center">
+  <img width="75%" src="./readme.images/bootmenu.png">
+</p>
+
+   ` vmlinuz initrd=initrd.img ks=http://192.168.200.131/ks.cfg`
+
+
+
+
 centos7-cis.ks:  kickstart file for CentOS 7, aims to provide a starting point for a Linux admin to build a host which meets the CIS CentOS 7 benchmarks
 
 minimal.ks:  A minimal kickstart file is provided so people can test their setup (PXE/DHCP etc) with a minimal amount of configuration going on.
