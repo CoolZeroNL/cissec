@@ -6,13 +6,13 @@
 install
 lang en_GB.UTF-8
 keyboard --vckeymap=gb --xlayouts='gb'
-timezone Europe/London --isUtc
+timezone Europe/Amsterdam --isUtc
 auth --useshadow --passalgo=sha512 			# CIS 6.3.1
 firewall --enabled
 services --enabled=NetworkManager,sshd
 eula --agreed
 # ignoredisk --only-use=vda     ## vmware...
-ignoredisk --drives=sd*|hd*|vda
+ignoredisk --drives=hd*|vda
 reboot
 	 
 bootloader --location=mbr --append=" crashkernel=auto"
@@ -34,7 +34,7 @@ logvol /var/log/audit --vgname vg_root --name audit --size=1024
 # CIS 1.1.9-1.1.0
 logvol /home --vgname vg_root --name home --size=1024 --grow --fsoptions="nodev"
 	 
-rootpw yourpasswordhere
+rootpw coolzero
 
 repo --name=base --baseurl="https://mirrors.edge.kernel.org/centos/8/AppStream/x86_64/os/"
 url --url="https://mirrors.edge.kernel.org/centos/8/AppStream/x86_64/os/"
